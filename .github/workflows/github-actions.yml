@@ -13,23 +13,27 @@ jobs:
       - name: Login to Container Registry
         uses: docker/login-action@v1
         with:
-          username: ${{ secrest.DOCKER_HUB_USERNAME }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
       - name: Create env file
         run: echo "${{ secrets.PRODUCTION_ENV_FILE }}" > .env.production
       - name: Build and push
-        uses: docker/build-and-push@v2
+        uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.IMAGE_NAME }}/:${{ github.run_number }}
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:${{ github.run_number }}
       - name: Deploy
         run: |
-          echo "${{ secrets.PRIVATE_KEY }}" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.HOSTNAME }} '
-          cd /home/ubuntu/hrm-app/ &&
-          git checkout main &&
-          git reset --hard origin/main &&
-          git pull origin main &&
-          docker-compose up -d
-          '
+          export RUN_NUMBER=${{ github.run_number }}
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.HOSTNAME }} << EOF
+            cd /home/ubuntu/hrm-app/
+            git checkout main
+            git reset --hard origin/main
+            git pull origin main
+            export RUN_NUMBER=${{ github.run_number }}
+            export DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}
+            export IMAGE_NAME=${{ secrets.IMAGE_NAME }}
+            docker-compose up -d
+          EOF
