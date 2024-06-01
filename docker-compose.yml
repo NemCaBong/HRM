@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   app:
-    image: thobeogalaxy/hrm-project:v0.0.1
+    image: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.IMAGE_NAME }}/:${{ github.run_number }}
     ports:
       - '5000:5000'
     depends_on:
