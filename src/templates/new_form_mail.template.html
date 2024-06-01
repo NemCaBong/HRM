@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form Created Notification</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f6f6f6;
+      }
+      .container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background: linear-gradient(90deg, rgba(255, 111, 0, 0.8) 0%, rgba(255, 90, 0, 0.8) 100%);
+        color: #ffffff;
+        padding: 20px;
+        border-radius: 8px 8px 0 0;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .header img {
+        max-width: 100px;
+        margin-bottom: 10px;
+      }
+      .content {
+        padding: 20px;
+        text-align: left;
+      }
+      .content h2 {
+        font-size: 20px;
+        margin-top: 0;
+      }
+      .content p {
+        font-size: 16px;
+        line-height: 1.5;
+        color: #333333;
+      }
+      .footer {
+        background-color: #f1f1f1;
+        color: #333333;
+        padding: 10px 20px;
+        border-radius: 0 0 8px 8px;
+        text-align: center;
+        font-size: 12px;
+      }
+      a.button {
+        background: linear-gradient(90deg, rgba(255, 111, 0, 0.8) 0%, rgba(255, 90, 0, 0.8) 100%);
+        color: #ffffff;
+        padding: 12px 24px;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 5px;
+        margin-top: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        transition: background 0.3s ease;
+      }
+      a.button:hover {
+        background: linear-gradient(90deg, rgba(255, 90, 0, 0.8) 0%, rgba(255, 70, 0, 0.8) 100%);
+      }
+      @media (max-width: 600px) {
+        .container {
+          padding: 10px;
+        }
+        .header,
+        .content,
+        .footer {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img src="https://cdn.vmogroup.com/vmogroup-global/assets/img/vmo_logo.png" alt="VMO Holdings Logo" />
+        <h1>VMO Holdings</h1>
+      </div>
+      <div class="content">
+        <h2>Hello, [Recipient's Name]</h2>
+        <p>Your form has been successfully created. Please click the link below to access and fill out the form.</p>
+        <p>If you have any questions, feel free to contact us. We are always here to help you.</p>
+        <a href="[Form Link]" class="button">Access Your Form</a>
+      </div>
+      <div class="footer">
+        <p>&copy; 2024 VMO Holdings. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+</html>

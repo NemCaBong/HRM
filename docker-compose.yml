@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  app:
+    image: thobeogalaxy/hrm-project:v0.0.1
+    ports:
+      - '5000:5000'
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+  db:
+    image: postgres:16.2
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_DB=hrm_vmo_real
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=hoang
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+volumes:
+  postgres_data:
