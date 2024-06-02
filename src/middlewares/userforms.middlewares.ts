@@ -236,7 +236,7 @@ export const accessUserFormMiddleware = requestHandlerWrapper(
 
     // check if the owner of the resource
     const result = await userFormService.isOwner(req.params.userFormId, requestedUserId)
-    console.log(result)
+    // console.log(result)
     if (result) {
       return next()
     }
@@ -244,7 +244,7 @@ export const accessUserFormMiddleware = requestHandlerWrapper(
     // check if the user is the direct manager of the owner of the resource
     if (roles.includes('Manager')) {
       const result = await userFormService.getManager(req.params.userFormId)
-      console.log(result, requestedUserId)
+      // console.log(result, requestedUserId)
       if (result && result.id === requestedUserId) {
         return next()
       }

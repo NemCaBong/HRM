@@ -13,7 +13,7 @@ const indexRouter = (app: Express) => {
   app.use('/api/forms', formsRouter)
   app.use('/api/user-forms', userformsRouter)
   app.use('/api/reports', reportsRouter)
-  app.use('/api/auth', authRouter)
+  app.use('/auth', authRouter)
   app.use('/api/roles', rolesRouter)
   app.use('/api/user-roles', userRolesRouter)
   app.use('/api/role-modules', roleModulesRouter)

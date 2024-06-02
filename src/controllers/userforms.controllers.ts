@@ -15,8 +15,18 @@ import UserForm from '../models/UserForm.model'
  * @returns {Promise<Response>} - Returns a response with the user forms data
  */
 export const getUserForms = async (req: Request, res: Response): Promise<Response> => {
-  const { roles, user_id: userId } = req.decoded_authorization as TokenPayload
-  const { limit = 10, page = 1, status, order = 'ASC', orderBy = 'createdAt' } = req.query
+  const { roles, user_id: requestedUserId } = req.decoded_authorization as TokenPayload
+  const {
+    limit = 10,
+    page = 1,
+    order = 'ASC',
+    orderBy = 'createdAt',
+    userFormStatus,
+    userId,
+    formId,
+    userStatus,
+    name
+  } = req.query
 
   const pagination = getPagination({ limit: Number(limit), page: Number(page) })
   const orderArray = createOrderArray(orderBy as string, order as string)
@@ -26,24 +36,39 @@ export const getUserForms = async (req: Request, res: Response): Promise<Respons
   switch (highestRole) {
     case ROLE_HIERARCHY['Manager']:
       result = await userFormService.getUserFormsManager({
-        managerId: userId,
+        managerId: requestedUserId,
         pagination: pagination,
-        status: status as UserFormStatusType,
+        filter: {
+          userFormStatus: userFormStatus as UserFormStatusType,
+          userId: userId as string,
+          formId: formId as string,
+          userStatus: userStatus as UserFormStatusType,
+          name: name as string
+        },
         orderArray
       })
       break
     case ROLE_HIERARCHY['Employee']:
       result = await userFormService.getUserFormsEmployee({
-        userId,
+        userId: requestedUserId,
         pagination: pagination,
-        status: status as UserFormStatusType,
+        filter: {
+          userFormStatus: userFormStatus as UserFormStatusType,
+          formId: formId as string
+        },
         orderArray
       })
       break
     default:
-      result = await userFormService.getUserForms({
+      result = await userFormService.getUserFormsHR({
         pagination: pagination,
-        status: status as UserFormStatusType,
+        filter: {
+          userFormStatus: userFormStatus as UserFormStatusType,
+          userId: userId as string,
+          formId: formId as string,
+          userStatus: userStatus as UserFormStatusType,
+          name: name as string
+        },
         orderArray
       })
       break
@@ -113,7 +138,7 @@ export const updateUserFormController = async (req: Request, res: Response): Pro
     userForm.status === USER_FORMS_STATUS.APPROVED ||
     userForm.status === USER_FORMS_STATUS.NEW
   ) {
-    return res.status(400).json({ message: 'Form is closed or approved or new', result: null })
+    return res.status(400).json({ message: 'User form is closed or approved or new', result: null })
   }
 
   await userFormService.updateUserFormDetail(userFormId, req.body, userId)
@@ -185,7 +210,7 @@ export const deleteUserFormController = async (req: Request, res: Response): Pro
   const { user_id: userId } = req.decoded_authorization as TokenPayload
 
   const { isDeleted } = (await userFormService.getOneUserForm(userFormId)) as UserForm
-  console.log(isDeleted)
+  // console.log(isDeleted)
   if (isDeleted) {
     return res.status(400).json({ message: 'Form is already deleted', result: null })
   }
@@ -210,7 +235,7 @@ export const undeleteUserFormController = async (req: Request, res: Response): P
   const { userFormId } = req.params
 
   const { isDeleted } = (await userFormService.getOneUserForm(userFormId)) as UserForm
-  console.log(isDeleted)
+  // console.log(isDeleted)
 
   if (!isDeleted) {
     return res.status(400).json({ message: 'Form is already undeleted', result: null })

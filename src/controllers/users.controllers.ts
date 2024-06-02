@@ -20,7 +20,6 @@ export const loginController = async (
   req: Request<ParamsDictionary, unknown, LoginReqBody>,
   res: Response
 ): Promise<Response> => {
-  console.log()
   const { id } = req.user as User
   const { roles } = await usersService.getRoles(id)
   const { access_token, refresh_token } = await usersService.login(id, roles)
@@ -111,7 +110,7 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
   const { refreshToken } = req.body
   const { user_id: userId, exp, roles } = req.decoded_refresh_token as TokenPayload
 
-  console.log(await usersService.getPermissionsByRoles(roles))
+  // console.log(await usersService.getPermissionsByRoles(roles))
 
   const { access_token, refresh_token } = await usersService.refreshToken({ userId, refreshToken, exp, roles })
 
@@ -225,17 +224,12 @@ export const undeleteUserController = async (req: Request, res: Response): Promi
  * @throws {BadRequestError} If no file is provided in the request.
  */
 export const uploadAvatarController = async (req: Request, res: Response): Promise<Response> => {
-  console.log(req.file)
   if (!req.file) {
     throw new BadRequestError({ message: 'Please upload an image', context: { api: 'uploadAvatarController' } })
   }
-
   const fileUrl = req.file.path
-  console.log(fileUrl)
   const { user_id: userId } = req.decoded_authorization as TokenPayload
-
   await usersService.uploadAvatar(userId, fileUrl)
-
   return res.status(200).json({ message: 'Upload avatar successfully', result: fileUrl })
 }
 

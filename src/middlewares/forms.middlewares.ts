@@ -289,7 +289,7 @@ export const cannotUpdateFormIfDeletedMiddleware = (req: Request, res: Response,
   const { isDeleted } = req.form as Form
   const routePath = req.baseUrl + (req.route.path === '/' ? '' : req.route.path)
 
-  if (isDeleted && routePath === '/forms/:formId' && req.method === 'PATCH') {
+  if (isDeleted && routePath === '/api/forms/:formId' && req.method === 'PATCH') {
     return res.status(400).json({ message: FORMS_MESSAGES.FORM_IS_DELETED, result: null })
   }
 

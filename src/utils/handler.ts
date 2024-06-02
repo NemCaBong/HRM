@@ -28,5 +28,5 @@ export const defaultErrorHandler = (err: any, req: Request, res: Response, next:
     return res.status(400).json({ message: 'Multer error', result: [err], status: 400 })
   }
   console.log(err)
-  return res.status(500).json({ message: 'Internal Server Error', result: [err], status: 500 })
+  return res.status(500).json({ message: 'Internal Server Error', result: [...err], status: 500 })
 }

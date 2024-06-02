@@ -143,9 +143,6 @@ class FormService {
     filter: { name: string }
   }) {
     const findOptions: FindOptions = {
-      where: {
-        isDeleted: false
-      },
       include: [
         {
           model: FormDetail,

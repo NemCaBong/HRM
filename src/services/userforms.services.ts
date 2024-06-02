@@ -6,7 +6,7 @@ import User from '../models/User.model'
 import UserForm from '../models/UserForm.model'
 import UserFormDetail from '../models/UserFormDetail.model'
 import { SubmitFormReqBody } from '../models/requests/Form.requests'
-import { FindOptions, Transaction } from 'sequelize'
+import { FindOptions, Sequelize, Transaction, WhereOptions, where } from 'sequelize'
 import { OrderArray } from '../constants/order'
 import { PaginationResult } from '../constants/types'
 import NotFoundError from '../errors/NotFoundError'
@@ -231,46 +231,56 @@ class UserFormService {
     return userForm.userId === userId
   }
 
-  async getUserForms({
+  async getUserFormsHR({
     pagination,
-    status = 'ALL',
+    filter,
     orderArray
   }: {
     pagination: PaginationResult
-    status?: UserFormStatusType | 'ALL'
+    filter: {
+      name?: string
+      userFormStatus?: UserFormStatusType
+      userStatus?: string
+      formId?: string
+      userId?: string
+    }
     orderArray: OrderArray
   }) {
+    const whereUser: WhereOptions = {}
+    const whereForm: WhereOptions = {}
+
+    if (filter.formId) whereForm.id = filter.formId
+    if (filter.userId) whereUser.id = filter.userId
+    if (filter.userStatus) whereUser.status = filter.userStatus
+    if (filter.name)
+      (whereUser as any)[Op.and] = [
+        Sequelize.where(Sequelize.literal(`CONCAT("user"."first_name", ' ', "user"."last_name")`), {
+          [Op.iLike]: `%${filter.name}%`
+        })
+      ]
+
     const queryOptions: FindOptions = {
       include: [
         {
           model: User,
           as: 'user',
-          attributes: { exclude: ['password'] }
+          attributes: ['id', 'firstName', 'lastName', 'email', 'employeeId', 'status', 'avatar'],
+          where: whereUser
         },
         {
           model: Form,
           as: 'form',
-          include: [
-            {
-              model: FormDetail,
-              as: 'formDetails',
-              where: { isDeleted: false }
-            }
-          ]
-        },
-        {
-          model: UserFormDetail,
-          as: 'userFormDetails',
-          where: { isDeleted: false },
-          required: false
+          attributes: ['id', 'name', 'description', 'total', 'isDeleted'],
+          where: whereForm
         }
       ],
+      attributes: ['id', 'status', 'isDeleted'],
       limit: pagination.limit,
       offset: pagination.offset,
       order: orderArray
     }
 
-    if (status !== 'ALL') queryOptions.where = { status: status }
+    if (filter.userFormStatus) queryOptions.where = { status: filter.userFormStatus }
 
     return await UserForm.findAll(queryOptions)
   }
@@ -278,49 +288,62 @@ class UserFormService {
   async getUserFormsManager({
     managerId,
     pagination,
-    status = 'ALL',
-    orderArray
+    orderArray,
+    filter
   }: {
     managerId: string
     pagination: PaginationResult
-    status?: UserFormStatusType | 'ALL'
     orderArray: OrderArray
+    filter: {
+      name?: string
+      userFormStatus?: UserFormStatusType
+      userStatus?: string
+      formId?: string
+      userId?: string
+    }
   }) {
+    let whereUser: WhereOptions = {
+      [Op.or]: [{ managerId: managerId }, { id: managerId }]
+    }
+    const whereForm: WhereOptions = { isDeleted: false }
+    const whereUserForm: WhereOptions = { isDeleted: false }
+
+    if (filter.name)
+      whereUser = {
+        ...whereUser,
+        [Op.and]: [
+          Sequelize.where(Sequelize.literal(`CONCAT("user"."first_name", ' ', "user"."last_name")`), {
+            [Op.iLike]: `%${filter.name}%`
+          })
+        ]
+      }
+
+    if (filter.userFormStatus) whereUserForm.status = filter.userFormStatus
+    if (filter.userStatus) (whereUser as any).status = filter.userStatus
+    if (filter.formId) whereForm.id = filter.formId
+    if (filter.userId) (whereUser as any).id = filter.userId
+
     const queryOptions: FindOptions = {
-      where: { isDeleted: false },
+      where: whereUserForm,
       include: [
         {
           model: User,
           as: 'user',
-          where: {
-            [Op.or]: [{ managerId: managerId }, { id: managerId }]
-          },
-          attributes: { exclude: ['password'] }
+          where: whereUser,
+          attributes: ['id', 'firstName', 'lastName', 'email', 'employeeId', 'status', 'avatar']
         },
         {
           model: Form,
           as: 'form',
-          include: [
-            {
-              model: FormDetail,
-              as: 'formDetails',
-              where: { isDeleted: false }
-            }
-          ]
-        },
-        {
-          model: UserFormDetail,
-          as: 'userFormDetails',
-          where: { isDeleted: false },
-          required: false
+          where: whereForm,
+          attributes: ['id', 'name', 'description', 'total']
         }
       ],
+      attributes: ['id', 'status', 'isDeleted'],
       limit: pagination.limit,
       offset: pagination.offset,
       order: orderArray
     }
-
-    if (status !== 'ALL') queryOptions.where = { status: status }
 
     return await UserForm.findAll(queryOptions)
   }
@@ -328,16 +351,22 @@ class UserFormService {
   async getUserFormsEmployee({
     userId,
     pagination,
-    status = 'ALL',
+    filter,
     orderArray
   }: {
     userId: string
     pagination: PaginationResult
-    status?: UserFormStatusType | 'ALL'
+    filter: { userFormStatus?: UserFormStatusType; formId?: string }
     orderArray: OrderArray
   }) {
+    const whereUserForm: WhereOptions = { isDeleted: false }
+    const whereForm: WhereOptions = { isDeleted: false }
+
+    if (filter.userFormStatus) whereUserForm.status = filter.userFormStatus
+    if (filter.formId) whereForm.id = filter.formId
+
     const queryOptions: FindOptions = {
-      where: { isDeleted: false },
+      where: whereUserForm,
       include: [
         {
           model: User,
@@ -345,32 +374,20 @@ class UserFormService {
           where: {
             id: userId
           },
-          attributes: { exclude: ['password'] }
+          attributes: ['id', 'firstName', 'lastName', 'email', 'employeeId', 'status', 'avatar']
         },
         {
           model: Form,
           as: 'form',
-          include: [
-            {
-              model: FormDetail,
-              as: 'formDetails',
-              where: { isDeleted: false }
-            }
-          ]
-        },
-        {
-          model: UserFormDetail,
-          as: 'userFormDetails',
-          where: { isDeleted: false },
-          required: false
+          where: whereForm,
+          attributes: ['id', 'name', 'description', 'total']
         }
       ],
+      attributes: ['id', 'status', 'isDeleted'],
       limit: pagination.limit,
       offset: pagination.offset,
       order: orderArray
     }
-
-    if (status !== 'ALL') queryOptions.where = { status: status }
 
     return await UserForm.findAll(queryOptions)
   }

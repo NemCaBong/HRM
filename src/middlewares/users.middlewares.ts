@@ -128,7 +128,7 @@ export const loginValidator = validate(
           options: async (value, { req }) => {
             const password = req.body.password
             const user = await usersService.getUserByEmail(value)
-            console.log(user)
+            // console.log(user)
             if (!user) {
               throw new BadRequestError({
                 message: USERS_MESSAGES.EMAIL_OR_PASSWORD_IS_INCORRECT,
@@ -256,7 +256,7 @@ export const accessTokenValidator = validate(
         custom: {
           options: async (value: string, { req }) => {
             const access_token = (value || '').split(' ')[1]
-            console.log(access_token)
+            // console.log(access_token)
             if (!access_token) {
               throw new AuthorizationError({
                 message: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED,
@@ -267,7 +267,7 @@ export const accessTokenValidator = validate(
               token: access_token,
               secretOrPublicKey: envConfig.jwtSecretAccessToken as string
             })
-            console.log(decodedAuthorization)
+            // console.log(decodedAuthorization)
 
             if (!decodedAuthorization) {
               throw new AuthorizationError({
@@ -376,7 +376,7 @@ export const isDirectManagerMiddleware = (idType: 'userId' | 'userFormId') => {
 }
 
 export const haveAccessMiddleware = requestHandlerWrapper(async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.decoded_authorization)
+  // console.log(req.decoded_authorization)
   const { roles } = req.decoded_authorization as TokenPayload
   if (roles.includes('Admin')) {
     return next()
