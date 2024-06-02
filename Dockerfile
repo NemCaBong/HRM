@@ -7,7 +7,6 @@ COPY package-lock.json .
 COPY tsconfig.json .
 COPY ./sql ./sql
 COPY ecosystem.config.js .
-COPY .env.production .
 COPY ./src ./src
 RUN npm install pm2 -g
 RUN npm install
