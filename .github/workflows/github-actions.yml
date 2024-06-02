@@ -38,4 +38,5 @@ jobs:
             export DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}
             export IMAGE_NAME=${{ secrets.IMAGE_NAME }}
             docker-compose up -d
+            docker image prune
           EOF
