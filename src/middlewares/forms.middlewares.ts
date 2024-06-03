@@ -140,7 +140,23 @@ export const formDetailValidator = validate(
 export const createNewFormValidator = validate(
   checkSchema(
     {
-      name: formNameSchema,
+      name: {
+        ...formNameSchema,
+        custom: {
+          options: async (formName) => {
+            const form = await formService.getFormByName(formName)
+
+            if (form) {
+              throw new BadRequestError({
+                message: FORMS_MESSAGES.FORM_NAME_ALREADY_EXISTS,
+                context: { api: 'createNewFormValidation' }
+              })
+            }
+
+            return true
+          }
+        }
+      },
       description: descriptionSchema,
       total: totalSchema,
       form_details: formDetailsSchema,

@@ -265,6 +265,10 @@ class FormService {
   async undeleteForm(formId: string) {
     return Form.update({ isDeleted: false, deletedAt: null, deletedBy: null }, { where: { id: formId } })
   }
+
+  async getFormByName(formName: string) {
+    return Form.findOne({ where: { name: formName } })
+  }
 }
 
 const formService = new FormService()

@@ -47,6 +47,7 @@ export const USERS_MESSAGES = {
 }
 
 export const FORMS_MESSAGES = {
+  FORM_NAME_ALREADY_EXISTS: 'Form name already exists',
   FORM_IS_DELETED: 'Form is deleted',
   FORM_NOT_FOUND: 'Form not found',
   FORM_DETAILS_ID_MUST_BE_UUID: 'Form details ID must be a UUID',
