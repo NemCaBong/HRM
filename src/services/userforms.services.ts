@@ -33,6 +33,11 @@ class UserFormService {
       where: { id: userFormId },
       include: [
         {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'employeeId', 'status', 'avatar']
+        },
+        {
           model: UserFormDetail,
           as: 'userFormDetails',
           attributes: ['id', 'answer', 'evaluation', 'formDetailsId'],

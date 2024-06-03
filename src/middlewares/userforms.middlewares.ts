@@ -111,7 +111,7 @@ export const getUserFormsValidator = validate(
           options: (value) => {
             if (!UserFormOrderByArray.includes(value)) {
               throw new BadRequestError({
-                message: USER_FORMS_MESSAGES.INVALID_ORDERBY,
+                message: `${USER_FORMS_MESSAGES.INVALID_ORDERBY}: ${UserFormOrderByArray.join(', ')}`,
                 context: { api: 'getUserFormsValidation' }
               })
             }
