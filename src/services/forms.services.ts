@@ -123,7 +123,7 @@ class FormService {
     } catch (err: any) {
       await transaction.rollback()
       throw new CustomDatabaseError({
-        message: 'Database Error: ' + err.message,
+        message: 'Error adding new form: ' + err.message,
         context: {
           api: 'addNewForm'
         }
