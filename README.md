@@ -4,6 +4,10 @@
 
 This is a Node.js project template configured with TypeScript, Express, Sequelize, and other useful tools for building robust and scalable applications. The project includes setup for linting, formatting, testing, and building the application.
 
+The project requirements are detailed in the following Google Sheets document:
+
+[Project Requirements](https://docs.google.com/spreadsheets/d/1VhZvLhBNd689rwOVt63QslvAt2T7d_pI/edit#gid=1745732212)
+
 ## Table of Contents
 
 - [IT1-2024 Node.js Project](#it1-2024-nodejs-project)

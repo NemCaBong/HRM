@@ -2,10 +2,10 @@
 // The 'user' property is of type 'User' and represents the authenticated user making the request.
 // This allows us to access the user object in the request handlers.
 import { Request } from 'express'
-import User from '~/models/schemas/User.schema'
 import { TokenPayload } from './models/requests/User.requests'
 import UserForm from './models/UserForm.model'
 import Form from './models/Form.model'
+import User from './models/User.model'
 
 declare module 'express' {
   interface Request {

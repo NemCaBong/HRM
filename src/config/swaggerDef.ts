@@ -1,4 +1,8 @@
 import { SwaggerDefinition } from 'swagger-jsdoc'
+import { config } from 'dotenv'
+
+config()
+const env = process.env.NODE_ENV
 
 export const swaggerDefinitions: SwaggerDefinition = {
   openapi: '3.0.0',
@@ -13,7 +17,7 @@ export const swaggerDefinitions: SwaggerDefinition = {
   },
   servers: [
     {
-      url: 'http://localhost:8080',
+      url: `http://localhost:${env === 'production' ? 5000 : 8080}`,
       description: 'Local server'
     }
   ],
